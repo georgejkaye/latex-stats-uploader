@@ -1,0 +1,23 @@
+name: Latex stats uploader
+description: Upload stats about latex documents to the stats database
+inputs:
+  main:
+    description: The path to the main file of the document
+    required: true
+  endpoint:
+    description: The url of the server to upload the stats to
+    required: true
+  user:
+    description: The username to login to the server with
+    required: true
+  password:
+    description: The password to login to the server with
+    required: true
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.main }}
+    - ${{ inputs.endpoint }}
+    - ${{ inputs.user }}
+    - ${{ inputs.password }}
