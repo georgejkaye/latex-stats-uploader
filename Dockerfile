@@ -22,6 +22,10 @@ RUN poetry install --without dev --no-root && rm -rf ${POETRY_CACHE_DIR}
 
 FROM python:3.11-bookworm as runtime
 
+RUN apt update
+RUN apt install pdftk -y
+RUN pdftk --version
+
 ENV VIRTUAL_ENV "/app/.venv"
 ENV TEXCOUNT "/app/texcount"
 ENV PATH "/app/.venv/bin:/app/texcount:$PATH"
