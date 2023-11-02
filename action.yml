@@ -4,6 +4,12 @@ inputs:
   main:
     description: The path to the main file of the document
     required: true
+  sha:
+    description: The sha of this commit
+    required: true
+  datetime:
+    description: The datetime of this commit
+    required: true
   endpoint:
     description: The url of the server to upload the stats to
     required: true
@@ -18,6 +24,8 @@ runs:
   image: Dockerfile
   args:
     - ${{ inputs.main }}
+    - ${{ inputs.sha }}
+    - ${{ inputs.datetime }}
     - ${{ inputs.endpoint }}
     - ${{ inputs.user }}
     - ${{ inputs.password }}

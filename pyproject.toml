@@ -10,7 +10,6 @@ packages = [{include = "latexstats", from = "src"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.31.0"
-gitpython = "^3.1.40"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.10.1"

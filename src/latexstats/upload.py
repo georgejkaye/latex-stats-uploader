@@ -1,6 +1,6 @@
+from datetime import datetime
 import os
 import sys
-from git import Repo
 import requests
 
 from latexstats.stats import CommitStats, get_commit_stats
@@ -39,20 +39,17 @@ def upload(stats: CommitStats, endpoint: str, user: str, password: str):
 
 
 def get_stats_from_compiled(
-    main_file: str, endpoint: str, user: str, password: str
+    main_file: str, sha : str, dt: datetime, endpoint: str, user: str, password: str,
 ):
-    working_dir = os.path.dirname(main_file)
-    repo = Repo(working_dir)
-    commit = repo.head.commit
-    stats = get_commit_stats(working_dir, commit, main_file)
+    stats = get_commit_stats(main_file, sha, dt)
     if stats is not None:
         upload(stats, endpoint, user, password)
 
 
 if __name__ == "__main__":
-    if not len(sys.argv) == 5:
-        print("Args: <main_file> <endpoint> <user> <password>")
+    if not len(sys.argv) == 7:
+        print("Args: <main_file> <sha> <datetime> <endpoint> <user> <password>")
         exit(1)
     get_stats_from_compiled(
-        sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+        sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6]
     )

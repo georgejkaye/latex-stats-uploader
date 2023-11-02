@@ -21,9 +21,6 @@ RUN poetry install --without dev --no-root && rm -rf ${POETRY_CACHE_DIR}
 
 FROM python:3.11-slim-bookworm as runtime
 
-RUN apt update
-RUN apt install git -y
-
 ENV VIRTUAL_ENV "/app/.venv"
 ENV PATH "/app/.venv/bin:$PATH"
 ENV PYTHONPATH "/app/src:$PYTHONPATH"

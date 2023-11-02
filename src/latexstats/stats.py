@@ -6,7 +6,6 @@ import subprocess
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
-from git import Commit, Repo
 
 @dataclass
 class CommitStats:
@@ -16,14 +15,6 @@ class CommitStats:
     pages: int
     diagrams: int
     unique_files: int
-
-
-def get_commit_sha(commit: Commit) -> str:
-    return commit.hexsha
-
-
-def get_commit_datetime(commit: Commit) -> datetime:
-    return commit.authored_datetime
 
 
 def get_words(main_file: str) -> int:
@@ -98,10 +89,8 @@ def get_pages(main_file: str) -> int:
 
 
 def get_commit_stats(
-    commit: Commit, main_file: str
+    main_file: str, sha : str, dt : datetime
 ) -> Optional[CommitStats]:
-    sha = get_commit_sha(commit)
-    dt = get_commit_datetime(commit)
     words = get_words(main_file)
     pages = get_pages(main_file)
     files = get_input_files(main_file)
