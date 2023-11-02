@@ -39,7 +39,12 @@ def upload(stats: CommitStats, endpoint: str, user: str, password: str):
 
 
 def get_stats_from_compiled(
-    main_file: str, sha : str, dt: datetime, endpoint: str, user: str, password: str,
+    main_file: str,
+    sha: str,
+    dt: datetime,
+    endpoint: str,
+    user: str,
+    password: str,
 ):
     stats = get_commit_stats(main_file, sha, dt)
     if stats is not None:
@@ -51,5 +56,10 @@ if __name__ == "__main__":
         print("Args: <main_file> <sha> <datetime> <endpoint> <user> <password>")
         exit(1)
     get_stats_from_compiled(
-        sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6]
+        sys.argv[1],
+        sys.argv[2],
+        datetime.fromisoformat(sys.argv[3]),
+        sys.argv[4],
+        sys.argv[5],
+        sys.argv[6],
     )
