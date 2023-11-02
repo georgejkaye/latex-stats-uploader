@@ -13,20 +13,25 @@ ENV POETRY_NO_INTERACTION=1 \
 
 RUN pip install poetry==${POETRY_VERSION}
 
-COPY pyproject.toml poetry.lock /
+WORKDIR /app
+
+COPY pyproject.toml poetry.lock ./
 RUN touch README.md
 RUN poetry install --without dev --no-root && rm -rf ${POETRY_CACHE_DIR}
 
 FROM python:3.11-slim-bookworm as runtime
 
-ENV VIRTUAL_ENV=/.venv \
-    PATH="/.venv/bin:$PATH" \
-    PYTHONPATH="/src:$PYTHONPATH"
+RUN apt update
+RUN apt install git -y
+
+ENV VIRTUAL_ENV "/app/.venv"
+ENV PATH "/app/.venv/bin:$PATH"
+ENV PYTHONPATH "/app/src:$PYTHONPATH"
 
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-COPY --from=builder /pyproject.toml /pyproject.toml
 
-COPY src /src
-COPY entrypoint.sh /entrypoint.sh
+WORKDIR /app
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+COPY src ./src
+
+ENTRYPOINT [ "python", "/app/src/latexstats/upload.py" ]

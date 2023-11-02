@@ -1,8 +1,0 @@
-#!/bin/sh -l
-
-MAIN_FILE=$1
-API_ENDPOINT=$2
-API_USER=$3
-API_PASSWORD=$4
-
-python /src/latexstats/upload.py $MAIN_FILE $API_ENDPOINT $API_USER $API_PASSWORD
