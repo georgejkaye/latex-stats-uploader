@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 
+
 @dataclass
 class CommitStats:
     sha: str
@@ -52,7 +53,7 @@ def get_input_files(main_file: str) -> list[str]:
     # Discard source files we don't care about
     # Also get rid of duplicates
     for file in source_files:
-        if not file[1].replace("\n", "") in dont_care_extensions:
+        if file[1].replace("\n", "") not in dont_care_extensions:
             file_name = sanitise_file_name(file[0])
             file_names.append(file_name)
     for file in binary_files:
@@ -62,15 +63,25 @@ def get_input_files(main_file: str) -> list[str]:
 
 
 def get_figures(files: list[str]) -> int:
-    figures = list(filter(lambda x: "figures" in x, files))
+    figures = list(
+        set(
+            (
+                filter(
+                    lambda x: "figures" in x
+                    and "vars" not in x
+                    and "defs" not in x
+                    and "styles" not in x
+                    and ".tikz" in x,
+                    files,
+                )
+            )
+        )
+    )
     return len(figures)
 
 
 def get_unique_files(files: list[str]) -> int:
-    unique_files = []
-    for file in files:
-        if file not in unique_files:
-            unique_files.append(file)
+    unique_files = list(set(files))
     return len(unique_files)
 
 
@@ -88,9 +99,7 @@ def get_pages(main_file: str) -> int:
     raise Exception("No NumberOfPages item in pdftk output")
 
 
-def get_commit_stats(
-    main_file: str, sha : str, dt : datetime
-) -> Optional[CommitStats]:
+def get_commit_stats(main_file: str, sha: str, dt: datetime) -> Optional[CommitStats]:
     words = get_words(main_file)
     pages = get_pages(main_file)
     files = get_input_files(main_file)
