@@ -38,13 +38,12 @@ def sanitise_file_name(file: str) -> str:
     return file.replace("\npdf", "").replace("\n", "").replace("//", "/")
 
 
-def get_input_files(main_file: str) -> list[str]:
-    log_file_name = f"{Path(main_file).stem}.log"
+def get_input_files(log_file: str) -> list[str]:
     # Check if the log file exists
-    if not os.path.isfile(log_file_name):
-        raise FileNotFoundError("Log file not found!")
+    if not os.path.isfile(log_file):
+        raise FileNotFoundError(f"Log file {log_file} not found!")
     # Read the log file
-    with open(log_file_name, "r", encoding="utf-8", errors="ignore") as f:
+    with open(log_file, "r", encoding="utf-8", errors="ignore") as f:
         log_text = f.read()
     # Scrape for source and binary files, which are represented differently
     source_files = re.findall(source_file_regex, log_text)
@@ -85,8 +84,7 @@ def get_unique_files(files: list[str]) -> int:
     return len(unique_files)
 
 
-def get_pages(main_file: str) -> int:
-    pdf_file = f"{Path(main_file).stem}.pdf"
+def get_pages(pdf_file: str) -> int:
     if not os.path.isfile(pdf_file):
         raise FileNotFoundError(f"Output pdf {pdf_file} not found")
     output = subprocess.check_output(
@@ -99,10 +97,12 @@ def get_pages(main_file: str) -> int:
     raise Exception("No NumberOfPages item in pdftk output")
 
 
-def get_commit_stats(main_file: str, sha: str, dt: datetime) -> Optional[CommitStats]:
+def get_commit_stats(
+    main_file: str, log_file: str, pdf_file: str, sha: str, dt: datetime
+) -> Optional[CommitStats]:
     words = get_words(main_file)
-    pages = get_pages(main_file)
-    files = get_input_files(main_file)
+    pages = get_pages(pdf_file)
+    files = get_input_files(log_file)
     diagrams = get_figures(files)
     unique_files = get_unique_files(files)
     commit_stats = CommitStats(sha, dt, words, pages, diagrams, unique_files)

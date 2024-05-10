@@ -4,6 +4,12 @@ inputs:
   main:
     description: The path to the main file of the document
     required: true
+  log:
+    description: The path to the log file for the document compilation
+    required: true
+  pdf:
+    description: The path to the pdf output of the document
+    required: true
   sha:
     description: The sha of this commit
     required: true
@@ -24,6 +30,8 @@ runs:
   image: Dockerfile
   args:
     - ${{ inputs.main }}
+    - ${{ inputs.log }}
+    - ${{ inputs.pdf }}
     - ${{ inputs.sha }}
     - ${{ inputs.datetime }}
     - ${{ inputs.endpoint }}
