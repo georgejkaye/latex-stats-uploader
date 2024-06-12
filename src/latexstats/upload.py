@@ -14,7 +14,7 @@ def post_request(
     data: dict = {},
     timeout: int = 30,
     max_tries: int = 10,
-) -> Any:
+) -> requests.Response:
     wait = 10
     for i in range(0, max_tries):
         try:
@@ -36,6 +36,9 @@ def get_token(endpoint: str, user: str, password: str) -> str:
     }
     data = {"username": user, "password": password}
     response = post_request(url, headers=headers, data=data)
+    if response.status_code != 200:
+        print(f"Received {response.status_code} while requesting token")
+        exit(1)
     token = response.json()["access_token"]
     return token
 
@@ -52,7 +55,9 @@ def post_stats(endpoint: str, token: str, stats: CommitStats):
         "files": stats.unique_files,
     }
     response = post_request(url, headers=headers, params=params)
-    print(response)
+    if response.status_code != 200:
+        print(f"Received {response.status_code} while posting stats")
+        exit(1)
 
 
 def upload(stats: CommitStats, endpoint: str, user: str, password: str):
@@ -73,6 +78,9 @@ def get_stats_from_compiled(
     stats = get_commit_stats(main_file, log_file, pdf_file, sha, dt)
     if stats is not None:
         upload(stats, endpoint, user, password)
+    else:
+        print("Could not compute stats")
+        exit(1)
 
 
 if __name__ == "__main__":
