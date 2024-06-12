@@ -1,9 +1,31 @@
 from datetime import datetime
-import os
 import sys
+from time import sleep
+from typing import Any
 import requests
 
 from latexstats.stats import CommitStats, get_commit_stats
+
+
+def post_request(
+    url: str,
+    headers: dict = {},
+    params: dict = {},
+    data: dict = {},
+    timeout: int = 30,
+    max_tries: int = 10,
+) -> Any:
+    wait = 10
+    for i in range(0, max_tries):
+        try:
+            response = requests.post(
+                url, headers=headers, data=data, params=params, timeout=timeout
+            )
+            return response
+        except requests.Timeout:
+            print(f"Request timed out, waiting {wait} seconds")
+            sleep(wait)
+            wait = wait * 2
 
 
 def get_token(endpoint: str, user: str, password: str) -> str:
@@ -13,7 +35,7 @@ def get_token(endpoint: str, user: str, password: str) -> str:
         "Content-Type": "application/x-www-form-urlencoded",
     }
     data = {"username": user, "password": password}
-    response = requests.post(url, headers=headers, data=data)
+    response = post_request(url, headers=headers, data=data)
     token = response.json()["access_token"]
     return token
 
@@ -29,7 +51,7 @@ def post_stats(endpoint: str, token: str, stats: CommitStats):
         "diagrams": stats.diagrams,
         "files": stats.unique_files,
     }
-    response = requests.post(url, headers=headers, params=params)
+    response = post_request(url, headers=headers, params=params)
     print(response)
 
 
